@@ -20,6 +20,54 @@ df = pd.read_csv("outputs/predictions/staten_island_otp_features.csv")
 df["Month"] = pd.to_datetime(df["Month"])
 model = joblib.load("models/xgboost_otp_model.pkl")
 
+def generate_future_forecast(df, model, forecast_months=6):
+    df_encoded = pd.get_dummies(
+        df.copy(),
+        columns=["Day Time", "Season"],
+        drop_first=True
+    )
+
+    expected_cols = model.get_booster().feature_names
+
+    for col in expected_cols:
+        if col not in df_encoded.columns:
+            df_encoded[col] = 0
+
+    X_all = df_encoded[expected_cols]
+
+    latest_row = X_all.iloc[-1:].copy()
+
+    future_predictions = []
+    current_row = latest_row.copy()
+
+    for i in range(forecast_months):
+        pred = model.predict(current_row)[0]
+        future_predictions.append(pred)
+
+        current_row["OTP_Lag_3"] = current_row["OTP_Lag_2"]
+        current_row["OTP_Lag_2"] = current_row["OTP_Lag_1"]
+        current_row["OTP_Lag_1"] = pred
+
+        current_row["OTP_Rolling_3"] = (
+            current_row[["OTP_Lag_1", "OTP_Lag_2", "OTP_Lag_3"]]
+            .mean(axis=1)
+        )
+
+    last_date = df["Month"].max()
+
+    future_dates = pd.date_range(
+        start=last_date + pd.DateOffset(months=1),
+        periods=forecast_months,
+        freq="MS"
+    )
+
+    forecast_df = pd.DataFrame({
+        "Month": future_dates,
+        "Forecasted_OTP": future_predictions
+    })
+
+    return forecast_df
+
 shap_image = Image.open("outputs/figures/shap_summary.png")
 
 st.sidebar.header("Dashboard Filters")
@@ -92,7 +140,67 @@ forecast_fig = px.line(
 )
 
 st.plotly_chart(forecast_fig, use_container_width=True)
+
+
+
 st.divider()
+
+st.subheader("Future OTP Forecast")
+
+forecast_months = st.slider(
+    "Select Forecast Horizon",
+    min_value=3,
+    max_value=12,
+    value=6
+)
+
+forecast_df = generate_future_forecast(
+    df=filtered_df,
+    model=model,
+    forecast_months=forecast_months
+)
+
+future_fig = px.line(
+    forecast_df,
+    x="Month",
+    y="Forecasted_OTP",
+    markers=True,
+    title=f"{forecast_months}-Month Future OTP Forecast"
+)
+
+future_fig.update_yaxes(
+    tickformat=".1%",
+    title="Forecasted OTP"
+)
+
+st.divider()
+st.plotly_chart(
+    future_fig,
+    use_container_width=True
+)
+
+forecast_avg = forecast_df["Forecasted_OTP"].mean()
+forecast_min = forecast_df["Forecasted_OTP"].min()
+forecast_max = forecast_df["Forecasted_OTP"].max()
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric("Average Forecasted OTP", f"{forecast_avg:.2%}")
+col2.metric("Lowest Forecasted OTP", f"{forecast_min:.2%}")
+col3.metric("Highest Forecasted OTP", f"{forecast_max:.2%}")
+
+if forecast_min >= 0.95:
+    st.success(
+        "Operational Outlook: Forecasted OTP remains strong across the selected forecast horizon."
+    )
+elif forecast_min >= 0.90:
+    st.warning(
+        "Operational Outlook: Forecasted OTP shows moderate reliability risk. Monitoring is recommended."
+    )
+else:
+    st.error(
+        "Operational Outlook: Forecasted OTP indicates high reliability risk. Operational review is recommended."
+    )
 st.subheader("AI Explainability & Operational Drivers")
 
 st.write(
