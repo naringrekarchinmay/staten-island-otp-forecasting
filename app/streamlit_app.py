@@ -95,6 +95,16 @@ def generate_future_forecast(df, model, forecast_months=6):
     # Return the future forecast dataframe for dashboard visualization.
     return forecast_df
 
+def assign_risk_level(otp_value):
+    # Classify forecasted OTP into operational risk levels.
+    if otp_value >= 0.95:
+        return "Low Risk"
+    elif otp_value >= 0.90:
+        return "Medium Risk"
+    else:
+        return "High Risk"
+
+
 # Load the SHAP summary image generated in the explainability notebook.
 shap_image = Image.open("outputs/figures/shap_summary.png")
 
@@ -215,6 +225,8 @@ forecast_df = generate_future_forecast(
     forecast_months=forecast_months
 )
 
+forecast_df["Risk_Level"] = forecast_df["Forecasted_OTP"].apply(assign_risk_level)
+
 # Create an interactive line chart for future OTP forecasts.
 future_fig = px.line(
     forecast_df,
@@ -252,18 +264,40 @@ col1.metric("Average Forecasted OTP", f"{forecast_avg:.2%}")
 col2.metric("Lowest Forecasted OTP", f"{forecast_min:.2%}")
 col3.metric("Highest Forecasted OTP", f"{forecast_max:.2%}")
 
+st.subheader("Forecast Risk Breakdown")
+
+risk_table = forecast_df.copy()
+risk_table["Forecasted_OTP"] = risk_table["Forecasted_OTP"].map(lambda x: f"{x:.2%}")
+risk_table["Month"] = risk_table["Month"].dt.strftime("%b %Y")
+
+st.dataframe(
+    risk_table,
+    use_container_width=True,
+    hide_index=True
+)
+
+low_risk_count = (forecast_df["Risk_Level"] == "Low Risk").sum()
+medium_risk_count = (forecast_df["Risk_Level"] == "Medium Risk").sum()
+high_risk_count = (forecast_df["Risk_Level"] == "High Risk").sum()
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric("Low Risk Months", low_risk_count)
+col2.metric("Medium Risk Months", medium_risk_count)
+col3.metric("High Risk Months", high_risk_count)
+
 # Display an operational outlook message based on the lowest forecasted OTP.
-if forecast_min >= 0.95:
-    st.success(
-        "Operational Outlook: Forecasted OTP remains strong across the selected forecast horizon."
+if high_risk_count > 0:
+    st.error(
+        "Operational Outlook: High-risk forecast period detected. Operational review is recommended."
     )
-elif forecast_min >= 0.90:
+elif medium_risk_count > 0:
     st.warning(
-        "Operational Outlook: Forecasted OTP shows moderate reliability risk. Monitoring is recommended."
+        "Operational Outlook: Moderate reliability risk detected. Continued monitoring is recommended."
     )
 else:
-    st.error(
-        "Operational Outlook: Forecasted OTP indicates high reliability risk. Operational review is recommended."
+    st.success(
+        "Operational Outlook: Forecasted OTP remains strong across the selected forecast horizon."
     )
 
 # Section for model explainability and operational driver interpretation.
