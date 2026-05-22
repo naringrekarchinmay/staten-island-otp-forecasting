@@ -95,6 +95,31 @@ def generate_future_forecast(df, model, forecast_months=6):
     # Return the future forecast dataframe for dashboard visualization.
     return forecast_df
 
+def generate_scenario_forecast(df, model, delay_rate_increase=0.0, forecast_months=6):
+    # Create a copy of the filtered data so the original dashboard data is not changed.
+    scenario_df = df.copy()
+
+    # Increase delay-related features based on the selected scenario.
+    scenario_df["Delay_Rate"] = scenario_df["Delay_Rate"] * (1 + delay_rate_increase)
+
+    if "Delayed Trains" in scenario_df.columns:
+        scenario_df["Delayed Trains"] = scenario_df["Delayed Trains"] * (1 + delay_rate_increase)
+
+    if "Delayed_Trains_Lag_1" in scenario_df.columns:
+        scenario_df["Delayed_Trains_Lag_1"] = scenario_df["Delayed_Trains_Lag_1"] * (1 + delay_rate_increase)
+
+    if "Delayed_Trains_Rolling_3" in scenario_df.columns:
+        scenario_df["Delayed_Trains_Rolling_3"] = scenario_df["Delayed_Trains_Rolling_3"] * (1 + delay_rate_increase)
+
+    # Reuse the same future forecasting logic after applying the scenario adjustment.
+    scenario_forecast_df = generate_future_forecast(
+        df=scenario_df,
+        model=model,
+        forecast_months=forecast_months
+    )
+
+    return scenario_forecast_df
+
 def assign_risk_level(otp_value):
     # Classify forecasted OTP into operational risk levels.
     if otp_value >= 0.95:
@@ -298,6 +323,88 @@ elif medium_risk_count > 0:
 else:
     st.success(
         "Operational Outlook: Forecasted OTP remains strong across the selected forecast horizon."
+    )
+
+st.divider()
+
+st.subheader("Scenario Testing: Delay Impact Simulation")
+
+st.write(
+    """
+    This section simulates how future OTP forecasts may change if delay-related 
+    conditions increase compared to the current operational pattern.
+    """
+)
+
+delay_rate_increase = st.slider(
+    "Simulated Delay Increase",
+    min_value=0,
+    max_value=50,
+    value=20,
+    step=5,
+    format="%d%%"
+)
+
+scenario_forecast_df = generate_scenario_forecast(
+    df=filtered_df,
+    model=model,
+    delay_rate_increase=delay_rate_increase / 100,
+    forecast_months=forecast_months
+)
+
+scenario_forecast_df["Risk_Level"] = scenario_forecast_df["Forecasted_OTP"].apply(assign_risk_level)
+
+scenario_fig = px.line(
+    scenario_forecast_df,
+    x="Month",
+    y="Forecasted_OTP",
+    markers=True,
+    title=f"Scenario Forecast with {delay_rate_increase}% Delay Increase"
+)
+
+scenario_fig.update_yaxes(
+    tickformat=".1%",
+    title="Scenario Forecasted OTP"
+)
+
+st.plotly_chart(
+    scenario_fig,
+    use_container_width=True
+)
+
+scenario_risk_table = scenario_forecast_df.copy()
+scenario_risk_table["Forecasted_OTP"] = scenario_risk_table["Forecasted_OTP"].map(lambda x: f"{x:.2%}")
+scenario_risk_table["Month"] = scenario_risk_table["Month"].dt.strftime("%b %Y")
+
+st.subheader("Scenario Risk Breakdown")
+
+st.dataframe(
+    scenario_risk_table,
+    use_container_width=True,
+    hide_index=True
+)
+
+scenario_low_risk_count = (scenario_forecast_df["Risk_Level"] == "Low Risk").sum()
+scenario_medium_risk_count = (scenario_forecast_df["Risk_Level"] == "Medium Risk").sum()
+scenario_high_risk_count = (scenario_forecast_df["Risk_Level"] == "High Risk").sum()
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric("Scenario Low Risk Months", scenario_low_risk_count)
+col2.metric("Scenario Medium Risk Months", scenario_medium_risk_count)
+col3.metric("Scenario High Risk Months", scenario_high_risk_count)
+
+if scenario_high_risk_count > 0:
+    st.error(
+        "Scenario Outlook: High-risk periods appear under this simulated delay increase."
+    )
+elif scenario_medium_risk_count > 0:
+    st.warning(
+        "Scenario Outlook: Moderate reliability risk appears under this simulated delay increase."
+    )
+else:
+    st.success(
+        "Scenario Outlook: OTP remains low risk even under this simulated delay increase."
     )
 
 # Section for model explainability and operational driver interpretation.
