@@ -1,0 +1,10 @@
+
+Phase 14 evaluated the XGBoost OTP forecasting model using time-series cross-validation with 5 chronological folds.
+
+Across the cross-validation folds, the model achieved an average MAE of 2.1107 OTP percentage points and an average RMSE of 2.8548. The average R² was 0.1820, and the average MAPE was 2.2677%.
+
+The standard deviation of MAE across folds was 0.5936, which indicates the level of variation in model performance across different historical test periods.
+
+The best-performing fold was Fold 5, while the weakest-performing fold was Fold 1 based on MAE.
+
+This validation approach provides a more rigorous evaluation than a single train-test split because it tests the model across multiple future periods while preserving chronological order.
