@@ -1,0 +1,10 @@
+
+Phase 15 estimated prediction intervals for the Staten Island Railway OTP forecasting model using residuals from Phase 14 time-series cross-validation.
+
+The residual-based 80% prediction interval used the 10th and 90th percentiles of historical residuals. The residual-based 90% prediction interval used the 5th and 95th percentiles of historical residuals.
+
+The 80% prediction interval achieved an observed coverage of 79.49%, while the 90% prediction interval achieved an observed coverage of 89.74%. These values are close to the expected coverage levels, suggesting that the prediction intervals are reasonably well calibrated.
+
+The average width of the 80% interval was 6.2958 OTP percentage points, while the average width of the 90% interval was 8.1776 OTP percentage points.
+
+Overall, this phase improves the forecasting framework by moving beyond point predictions and adding uncertainty ranges around OTP forecasts. This is useful for operational decision-making because it communicates not only the expected OTP value, but also the range within which actual OTP may reasonably fall.
