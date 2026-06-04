@@ -140,7 +140,7 @@ Key operational drivers identified include:
 
 ## Machine Learning Workflow
 
-The project follows a structured machine learning workflow:
+The project follows a structured machine learning and research workflow:
 
 1. Data loading and initial review
 2. Data cleaning and preprocessing
@@ -154,6 +154,8 @@ The project follows a structured machine learning workflow:
 10. Baseline model comparison
 11. Time-series cross-validation
 12. Prediction interval estimation
+13. Formal research question and methodology development
+
 
 ---
 
@@ -373,6 +375,55 @@ The 80% interval captured **79.49%** of actual OTP values, and the 90% interval 
 This improves the project by moving beyond point forecasting and adding uncertainty estimation, which is useful for operational decision-making.
 
 ---
+## Phase 16: Research Question and Methodology
+
+Phase 16 formally defines the research direction, methodology, hypotheses, limitations, and expected contribution of the Staten Island Railway OTP forecasting project.
+
+The purpose of this phase is to move the project from a technical machine learning implementation into a structured applied research study.
+
+### Phase 16 Main Research Question
+
+Can gradient-boosted tree models using lag-based, rolling-window, calendar, and operational features outperform traditional statistical time-series baselines such as SARIMA and Prophet in forecasting short-horizon commuter rail on-time performance, while providing interpretable operational insights through SHAP analysis?
+
+### Supporting Research Questions
+
+* Do machine learning models produce lower prediction error than traditional statistical forecasting models for monthly Staten Island Railway OTP forecasting?
+* Which historical, seasonal, and operational features contribute most strongly to OTP prediction?
+* How stable is model performance when evaluated using time-aware cross-validation instead of a single train-test split?
+* Can prediction intervals provide useful uncertainty estimates around OTP forecasts for operational decision-making?
+* Can the forecasting framework support proactive planning by identifying future months or periods with increased risk of lower OTP?
+
+### Research Hypotheses
+
+* XGBoost will achieve lower MAE and RMSE than SARIMA and Prophet baselines for short-horizon OTP forecasting.
+* Lag-based OTP features and rolling-window averages will be among the strongest predictors of future OTP.
+* Time-aware cross-validation will provide a more realistic estimate of model performance than a single train-test split.
+* SHAP explainability will reveal interpretable relationships between historical OTP behavior, seasonal patterns, and predicted OTP.
+* Prediction intervals and future risk classification can make the forecasting framework more useful for operational planning than point forecasts alone.
+
+### Methodology Summary
+
+The project follows a structured methodology:
+
+1. Collect monthly Staten Island Railway OTP data from MTA open data.
+2. Clean and prepare the data for time-series analysis.
+3. Conduct exploratory data analysis to identify trends, seasonality, and variation.
+4. Transform the time-series forecasting problem into a supervised machine learning problem using lag, rolling-window, calendar, and trend features.
+5. Train traditional statistical baseline models including SARIMA and Prophet.
+6. Train machine learning models including Linear Regression, Random Forest, and XGBoost.
+7. Evaluate models using MAE, RMSE, R², and MAPE.
+8. Use TimeSeriesSplit cross-validation to test model stability across chronological folds.
+9. Apply SHAP explainability to interpret the best-performing machine learning model.
+10. Add prediction intervals to communicate forecast uncertainty.
+11. Use the results to support future OTP risk classification and operational decision-support analysis.
+
+### Phase 16 Finding
+
+Phase 16 strengthens the academic and research value of the project by clearly defining the research question, supporting research questions, hypotheses, methodology, limitations, and future direction.
+
+The project is now framed as a comparative forecasting study that evaluates whether machine learning models can outperform traditional statistical baselines while also providing interpretable and uncertainty-aware forecasting outputs.
+
+---
 
 ## Key Outputs
 
@@ -425,8 +476,9 @@ staten-island-otp-forecasting/
 │   ├── 06_future_forecasting.ipynb
 │   ├── 07_baseline_model_comparison.ipynb
 │   ├── 08_timeseries_cross_validation.ipynb
-│   └── 09_prediction_intervals.ipynb
-│
+│   ├── 09_prediction_intervals.ipynb
+│   └── 10_research_question_methodology.ipynb
+
 ├── outputs/
 │   ├── figures/
 │   ├── forecasts/
@@ -456,10 +508,11 @@ Completed:
 * Baseline model comparison
 * Time-series cross-validation
 * Prediction intervals
+* Formal research question and methodology
 
 Planned:
 
-* Formal research question and methodology
+
 * Weather feature enhancement
 * OTP risk classification refinement
 * Final report and paper-style draft
@@ -471,7 +524,7 @@ Planned:
 
 ### Phase 16: Research Question and Methodology
 
-Formalize the research question, methodology, contribution, limitations, and final project structure.
+Completed. This phase formalized the research question, methodology, hypotheses, contribution, limitations, and final project direction.
 
 ### Phase 17: Weather Feature Enhancement
 
