@@ -1,4 +1,5 @@
 # Import required libraries for dashboard creation, data handling, plotting, model loading, and image display.
+import os
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -406,6 +407,110 @@ else:
     st.success(
         "Scenario Outlook: OTP remains low risk even under this simulated delay increase."
     )
+
+st.divider()
+
+# Section presenting the Phase 13-15 research validation results from saved output artifacts.
+st.header("Research Validation Results (Phases 13-15)")
+
+st.write(
+    """
+    These results come from the saved research outputs: a fair baseline comparison,
+    time-series cross-validation, and residual-based prediction intervals.
+    Target: next-month 7-Day On-Time Performance (without boat).
+    """
+)
+
+# Phase 13: baseline model comparison.
+st.subheader("Phase 13: Baseline Model Comparison")
+
+# Load the saved model comparison table if it exists.
+comparison_path = "outputs/reports/phase13_model_comparison.csv"
+if os.path.exists(comparison_path):
+    comparison_df = pd.read_csv(comparison_path)
+
+    st.dataframe(
+        comparison_df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    st.info(
+        "The fairly retrained XGBoost model achieved the lowest MAE (1.2087), "
+        "about 18.7% lower than the best simple baseline (6-month moving average, 1.4861), "
+        "and was the only model with positive R² on the test window."
+    )
+else:
+    st.warning(f"Phase 13 results file not found: {comparison_path}")
+
+# Display the Phase 13 comparison figures side by side if they exist.
+col1, col2 = st.columns(2)
+phase13_mae_fig = "outputs/figures/phase13_model_comparison_mae.png"
+phase13_models_fig = "outputs/figures/phase13_actual_vs_key_models.png"
+
+if os.path.exists(phase13_mae_fig):
+    col1.image(phase13_mae_fig, caption="Model comparison by MAE (Phase 13)", use_container_width=True)
+if os.path.exists(phase13_models_fig):
+    col2.image(phase13_models_fig, caption="Actual vs key model predictions (Phase 13)", use_container_width=True)
+
+# Phase 14: time-series cross-validation summary.
+st.subheader("Phase 14: Time-Series Cross-Validation")
+
+cv_summary_path = "outputs/reports/phase14_timeseries_cv_summary.csv"
+if os.path.exists(cv_summary_path):
+    cv_summary_df = pd.read_csv(cv_summary_path)
+
+    st.dataframe(
+        cv_summary_df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    st.info(
+        "Across 5 chronological folds the model averaged MAE 2.1107 (±0.5936). "
+        "Accuracy improved with training history: the earliest fold had MAE 2.93, "
+        "the latest fold 1.30. Performance is era-dependent, so the Phase 13 result "
+        "should be read as a recent-era estimate."
+    )
+else:
+    st.warning(f"Phase 14 results file not found: {cv_summary_path}")
+
+phase14_fold_fig = "outputs/figures/phase14_cv_mae_by_fold.png"
+if os.path.exists(phase14_fold_fig):
+    st.image(phase14_fold_fig, caption="MAE by cross-validation fold (Phase 14)", width=700)
+
+# Phase 15: prediction interval summary.
+st.subheader("Phase 15: Prediction Intervals")
+
+interval_path = "outputs/reports/phase15_prediction_interval_summary.csv"
+if os.path.exists(interval_path):
+    interval_df = pd.read_csv(interval_path)
+
+    st.dataframe(
+        interval_df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    st.info(
+        "Residual-based intervals are well calibrated: the 80% interval covered 79.49% "
+        "of actual values and the 90% interval covered 89.74%. A point forecast of 96% OTP "
+        "reads as roughly 93-99 at 80% confidence."
+    )
+else:
+    st.warning(f"Phase 15 results file not found: {interval_path}")
+
+# Display the Phase 15 figures side by side if they exist.
+col1, col2 = st.columns(2)
+phase15_intervals_fig = "outputs/figures/phase15_prediction_intervals.png"
+phase15_coverage_fig = "outputs/figures/phase15_interval_coverage.png"
+
+if os.path.exists(phase15_intervals_fig):
+    col1.image(phase15_intervals_fig, caption="Predictions with 80%/90% intervals (Phase 15)", use_container_width=True)
+if os.path.exists(phase15_coverage_fig):
+    col2.image(phase15_coverage_fig, caption="Observed vs expected interval coverage (Phase 15)", use_container_width=True)
+
+st.divider()
 
 # Section for model explainability and operational driver interpretation.
 st.subheader("AI Explainability & Operational Drivers")
