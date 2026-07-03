@@ -143,6 +143,8 @@ SHAP analysis of the trained XGBoost model (notebook 05; `outputs/figures/shap_s
 4. **OTP lags and rolling means** (`OTP_Lag_1`, `OTP_Lag_3`, `OTP_Rolling_6`, `OTP_Lag_2`): recent OTP momentum.
 5. **Delayed Trains** and `Delayed_Trains_Rolling_3`: raw operational delay volume.
 
+*Figure placeholders: `outputs/figures/shap_bar.png`, `outputs/figures/shap_summary.png`.*
+
 The picture is operationally coherent: where the railway is in the calendar, how much delay it is currently carrying, and how it has trended recently jointly determine the forecast. This moves the model from a black box to something a planner can interrogate; the dashboard's explainability section asks not only *what* the model predicts but *why*.
 
 ## 12. Prediction Intervals and Uncertainty
