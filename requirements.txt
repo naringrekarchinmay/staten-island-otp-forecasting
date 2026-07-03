@@ -10,3 +10,5 @@ streamlit
 joblib
 pillow
 openpyxl
+statsmodels
+prophet

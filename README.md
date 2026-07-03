@@ -228,7 +228,7 @@ The model uses several time-series and operational features, including:
 
 These features help the model understand historical operational momentum, delay patterns, and seasonal reliability trends.
 
-For the main research comparison, the project uses **7-Day OTP** as the target variable so that each month has one consistent OTP value.
+For the main research comparison, the project uses **7-Day On-Time Performance (without boat)** as the target variable so that each month has one consistent OTP value. This is the `On-Time Performance` column in the MTA dataset (not the `On-Time Performance (With Boat)` variant), filtered to the `7-Day` Day Time category.
 
 ---
 
@@ -282,7 +282,7 @@ To avoid data leakage, XGBoost was retrained using only data available before th
 
 * Training data: through July 2025
 * Test period: August 2025 to January 2026
-* Target: 7-Day OTP
+* Target: 7-Day On-Time Performance (without boat)
 
 ### Phase 13 Results
 
@@ -489,6 +489,39 @@ staten-island-otp-forecasting/
 ├── requirements.txt
 └── .gitignore
 ```
+
+---
+
+## How to Run
+
+Install dependencies (Python 3.10+ recommended):
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the notebooks in numeric order. Notebooks 01–03 must run first because they produce the cleaned data and feature table used by every later notebook:
+
+| Order | Notebook | Purpose |
+| ----- | -------- | ------- |
+| 01 | `01_data_loading_and_initial_review.ipynb` | Load raw MTA data, produce `data/raw/cleaned_staten_island_otp.csv` |
+| 02 | `02_eda.ipynb` | Exploratory data analysis |
+| 03 | `03_feature_engineering.ipynb` | Build lag/rolling/calendar features and the `Next_Month_OTP` target |
+| 04 | `04_model_training.ipynb` | Train Linear Regression, Random Forest, XGBoost; save the model |
+| 05 | `05_explainability.ipynb` | SHAP analysis |
+| 06 | `06_future_forecasting.ipynb` | Recursive multi-month forecasting |
+| 07 | `07_baseline_model_comparison.ipynb` | Phase 13: baselines vs fairly retrained XGBoost |
+| 08 | `08_timeseries_cross_validation.ipynb` | Phase 14: TimeSeriesSplit cross-validation |
+| 09 | `09_prediction_intervals.ipynb` | Phase 15: residual-based prediction intervals |
+| 10 | `10_research_question_methodology.ipynb` | Phase 16: research question and methodology (narrative) |
+
+Launch the dashboard from the project root:
+
+```bash
+streamlit run app/streamlit_app.py
+```
+
+Note on data range: the raw data extends through 2026-01, but the feature table ends at 2025-12 because the target `Next_Month_OTP` is created by shifting OTP one month back, which drops the final month from the supervised dataset.
 
 ---
 
