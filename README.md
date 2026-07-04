@@ -63,7 +63,7 @@ The project also studies whether model predictions can be made more useful for o
 
 ## Dashboard Capabilities
 
-The dashboard currently includes:
+The dashboard is a six-page Streamlit app — Home, System Health, OTP Trends, AI Forecast, Scenario Lab, and Research — in a dark "Dispatch" command-center design. Its capabilities include:
 
 ### 1. Executive Overview
 
