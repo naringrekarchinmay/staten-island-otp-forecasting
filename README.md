@@ -172,7 +172,7 @@ The following regression and forecasting models were tested:
 * SARIMA
 * Prophet
 
-XGBoost performed the best among the tested machine learning models and was selected as the main forecasting model for dashboard integration and further research development.
+Among the machine learning models, results were mixed: Linear Regression achieved the lowest MAE, while XGBoost achieved the lowest RMSE and the highest R². XGBoost was selected as the main forecasting model because it performed best on the variance-sensitive metrics (RMSE and R²), captures non-linear feature interactions, and held up in the later validation phases (fair baseline comparison and time-series cross-validation). It was carried forward for dashboard integration and further research development.
 
 ---
 
@@ -413,7 +413,7 @@ The project follows a structured methodology:
 6. Train machine learning models including Linear Regression, Random Forest, and XGBoost.
 7. Evaluate models using MAE, RMSE, R², and MAPE.
 8. Use TimeSeriesSplit cross-validation to test model stability across chronological folds.
-9. Apply SHAP explainability to interpret the best-performing machine learning model.
+9. Apply SHAP explainability to interpret the selected machine learning model (XGBoost).
 10. Add prediction intervals to communicate forecast uncertainty.
 11. Use the results to support future OTP risk classification and operational decision-support analysis.
 
