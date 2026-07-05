@@ -21,7 +21,7 @@ The goal of this project is to move beyond traditional historical reporting and 
 * Classify future forecast periods into operational risk levels
 * Present results through an interactive Streamlit dashboard
 
-This project is still a work in progress and is being developed as an applied AI, machine learning, and transportation analytics project.
+The core pipeline, dashboard, and research write-up are complete; the project continues to be extended as an applied AI, machine learning, and transportation analytics project (see Future Work).
 
 ---
 
@@ -63,37 +63,18 @@ The project also studies whether model predictions can be made more useful for o
 
 ## Dashboard Capabilities
 
-The dashboard is a six-page Streamlit app — Home, System Health, OTP Trends, AI Forecast, Scenario Lab, and Research — in a dark "Dispatch" command-center design. Its capabilities include:
+The dashboard is a six-page Streamlit app built in a dark "Dispatch" command-center design (see [DESIGN.md](DESIGN.md) and [PRODUCT.md](PRODUCT.md)). Navigation is a hidden `st.navigation` menu with a custom sidebar; each page lives in its own module under `app/views/`.
 
-### 1. Executive Overview
+| # | Page | Purpose |
+| - | ---- | ------- |
+| 01 | **Home** | Hero landing with executive KPI cards (average OTP, delay rate, best/worst OTP) and chapter links into the rest of the app |
+| 02 | **System Health** | "How are we doing?" — monthly OTP with a 6-month rolling average and current-status readouts |
+| 03 | **OTP Trends** | Historical trend analysis: OTP by service category, actual vs. predicted OTP (out-of-sample CV), and the prediction-residual distribution |
+| 04 | **AI Forecast** | Recursive multi-month XGBoost forecast (3–12 month horizon), forecast KPI cards, and an operational risk breakdown |
+| 05 | **Scenario Lab** | "What if?" — interactive scenario forecasting compared against a baseline, with a scenario risk comparison |
+| 06 | **Research** | The validation evidence: Phase 13 model comparison (MAE/RMSE), Phase 14 cross-validation by fold, error vs. training history, and Phase 15 interval coverage |
 
-* Average OTP
-* Average Delay Rate
-* Best OTP
-* Worst OTP
-
-### 2. Historical OTP Trend Analysis
-
-* Interactive line chart showing OTP over time
-* Sidebar filter for different operational periods such as Day Time categories
-
-### 3. Actual vs Predicted OTP
-
-* Compares real OTP values against model-predicted OTP
-* Allows users to select a specific Day Time category for clearer model evaluation
-
-### 4. Future OTP Forecasting
-
-* Recursive future forecasting using the trained XGBoost model
-* User-controlled forecast horizon from 3 to 12 months
-* Forecasted OTP trend chart
-* Forecast KPI cards:
-
-  * Average Forecasted OTP
-  * Lowest Forecasted OTP
-  * Highest Forecasted OTP
-
-### 5. Operational Risk Scoring
+### Operational Risk Scoring
 
 Forecasted months are classified into operational risk levels:
 
@@ -103,18 +84,18 @@ Forecasted months are classified into operational risk levels:
 | 90% - 95%      | Medium Risk |
 | < 90%          | High Risk   |
 
-The dashboard also provides a simple operational outlook message based on the forecasted risk levels.
+The AI Forecast page also provides a simple operational outlook message based on the forecasted risk levels.
 
-### 6. Explainable AI
+### Explainable AI
 
 SHAP (SHapley Additive Explanations) is used to identify which features most influence the model’s OTP predictions.
 
 Key operational drivers identified include:
 
-* Seasonality
+* Month / seasonality
 * Delay Rate
-* Recent OTP Momentum
-* Rolling Operational Trends
+* Recent OTP momentum (lag features)
+* Rolling operational trends
 
 ---
 
@@ -453,19 +434,38 @@ outputs/
 
 ---
 
+## Deliverables
+
+Final write-up and presentation artifacts live in `reports/`:
+
+* `reports/final_report.md` — full project report in Markdown
+* `reports/final_report.pdf` — rendered PDF report with embedded figures
+* `reports/final_presentation.pptx` — presentation deck
+
+---
+
 ## Project Structure
 
 ```text
 staten-island-otp-forecasting/
 │
-├── app/
-│   └── streamlit_app.py
+├── app/                          # Multi-page Streamlit dashboard ("Dispatch" design)
+│   ├── streamlit_app.py          # Entry point + sidebar + st.navigation
+│   ├── views/                    # One module per page
+│   │   ├── home.py
+│   │   ├── health.py
+│   │   ├── trends.py
+│   │   ├── forecast.py
+│   │   ├── scenario.py
+│   │   └── research.py
+│   ├── shared/                   # data.py, charts.py, styles.py helpers
+│   └── static/                   # Image assets
 │
 ├── data/
-│   └── raw/
+│   └── raw/                      # Raw MTA .xlsx + cleaned_staten_island_otp.csv
 │
 ├── models/
-│   └── xgboost_otp_model.pkl
+│   └── xgboost_otp_model.pkl     # Trained forecasting model
 │
 ├── notebooks/
 │   ├── 01_data_loading_and_initial_review.ipynb
@@ -478,13 +478,23 @@ staten-island-otp-forecasting/
 │   ├── 08_timeseries_cross_validation.ipynb
 │   ├── 09_prediction_intervals.ipynb
 │   └── 10_research_question_methodology.ipynb
-
-├── outputs/
+│
+├── outputs/                      # Generated artifacts (figures, predictions, reports)
 │   ├── figures/
-│   ├── forecasts/
 │   ├── predictions/
 │   └── reports/
 │
+├── reports/                      # Final deliverables
+│   ├── final_report.md
+│   ├── final_report.pdf
+│   └── final_presentation.pptx
+│
+├── docs/                         # Planning docs
+│   └── plans/
+│
+├── .streamlit/                   # Streamlit theme config
+├── PRODUCT.md                    # Product brief
+├── DESIGN.md                     # Dashboard design tokens/spec
 ├── README.md
 ├── requirements.txt
 └── .gitignore
@@ -542,14 +552,13 @@ Completed:
 * Time-series cross-validation
 * Prediction intervals
 * Formal research question and methodology
+* Dashboard upgrade surfacing Phase 13–15 research results
+* Final report (Markdown + PDF) and presentation deck
 
 Planned:
 
-
 * Weather feature enhancement
 * OTP risk classification refinement
-* Final report and paper-style draft
-* Dashboard upgrade with research results
 
 ---
 
@@ -569,18 +578,18 @@ Translate predicted OTP and uncertainty intervals into operational risk categori
 
 ### Phase 19: Final Report and Paper Draft
 
-Prepare a final class report and possible paper-style draft.
+Completed. A final report (`reports/final_report.md` and `reports/final_report.pdf`) and presentation deck (`reports/final_presentation.pptx`) have been produced.
 
 ### Phase 20: Dashboard Upgrade
 
-Update the Streamlit dashboard to include:
+Completed. The dashboard was rebuilt as a six-page "Dispatch" command-center app and now surfaces:
 
-* Baseline model comparison visuals
-* Time-series cross-validation results
-* Prediction interval visualization
-* Risk classification
-* SHAP explainability
-* Future forecast results
+* Baseline model comparison visuals (Research page)
+* Time-series cross-validation results (Research page)
+* Prediction interval / coverage visualization (Research page)
+* Operational risk breakdown (AI Forecast and Scenario Lab pages)
+* Actual vs. predicted OTP and residuals (OTP Trends page)
+* Future forecast results (AI Forecast page)
 
 ---
 
