@@ -72,6 +72,12 @@ def scenario_forecast(df, model, delay_increase=0.0, months=6):
             s[col] = s[col] * (1 + delay_increase)
     return future_forecast(s, model, months)
 
+def apply_pi(pct, pi):
+    """Apply residual PI bounds (percentage points) to a forecast series in % scale."""
+    lower = pct + pi[0]
+    upper = (pct + pi[1]).clip(upper=100.0)
+    return lower, upper
+
 def risk_level(otp01):
     if otp01 >= 0.95:
         return "Low"

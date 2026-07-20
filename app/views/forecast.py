@@ -18,8 +18,7 @@ df7 = data.seven_day(data.load_features())
 model = data.load_model()
 fc = data.future_forecast(df7, model, horizon)
 fc["pct"] = fc["Forecasted_OTP"] * 100
-fc["lower80"] = fc["pct"] + data.PI80[0]
-fc["upper80"] = (fc["pct"] + data.PI80[1]).clip(upper=100.0)
+fc["lower80"], fc["upper80"] = data.apply_pi(fc["pct"], data.PI80)
 fc["Risk Level"] = fc["Forecasted_OTP"].apply(data.risk_level)
 
 hist = df7.tail(36)
