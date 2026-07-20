@@ -161,7 +161,7 @@ The Streamlit application (`app/streamlit_app.py`) packages the analysis for non
 - **Era dependence.** Cross-validated MAE (2.11) is materially worse than the recent-era hold-out MAE (1.21). The model is most trustworthy where training history is long and the operating regime resembles the recent past; structural breaks such as the pandemic degrade it.
 - **No exogenous drivers.** Weather, incidents, maintenance schedules, and ridership are absent. The model can only extrapolate internal momentum and seasonality; it cannot anticipate externally caused disruptions.
 - **Recursive forecast error accumulation.** Multi-month forecasts feed predictions back as inputs, so uncertainty compounds with horizon; the calibrated intervals of Phase 15 apply to the one-step forecast.
-- **Single line, single metric.** Results are specific to the SIR 7-Day OTP series and may not transfer to other lines or reliability metrics without revalidation.
+- **Single line, single metric.** Results are specific to the SIR 7-Day OTP (without boat) series and may not transfer to other lines or reliability metrics without revalidation.
 
 ## 15. Future Work
 
