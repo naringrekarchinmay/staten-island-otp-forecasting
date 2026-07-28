@@ -14,10 +14,18 @@ runtime (no Prophet/cmdstan build in the cloud).
    - **Branch:** `main`
    - **Main file path:** `app/streamlit_app.py`
    - **App URL:** pick a slug, e.g. `staten-island-otp` (→ `https://staten-island-otp.streamlit.app`)
-4. (Optional) **Advanced settings → Python version:** 3.12 or 3.13 — either
-   resolves the pinned wheels cleanly. No secrets are required.
-5. Click **Deploy**. First build takes ~2–4 minutes (slim requirements, no
-   Prophet). Watch the build log; it should end with the app running.
+4. **Required — do not skip:** click **Advanced settings** and set
+   **Python version = 3.13**. The pinned `numpy`/`pandas` wheels only exist
+   up to Python 3.13 (cp313); if the build lands on 3.14 it will try to
+   compile numpy/pandas from source and hang at "Your app is in the oven"
+   forever. Streamlit Cloud cannot change the Python version after deploy and
+   does not read a `runtime.txt`, so this must be set here. No secrets needed.
+5. Click **Deploy**. With Python 3.13 it installs prebuilt wheels (no
+   compiling) and is live in ~2 minutes.
+
+> If an app is already stuck on 3.14: delete it (**⋮ → Delete app**) and
+> redeploy from step 2 — the version is fixed at first deploy and can only be
+> changed by redeploying.
 
 ## After it goes live
 
