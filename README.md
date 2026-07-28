@@ -237,6 +237,12 @@ Used as an additional forecasting baseline designed for time-series data with tr
 
 ---
 
+## Data
+
+Monthly Staten Island Railway on-time performance is published by the MTA at [metrics.mta.info](https://metrics.mta.info/?subway/statenislandrailwaymetrics). The copy committed to this repository was downloaded from there and covers **2006-01 through 2026-01**: 1,205 rows across five Day Time categories, of which 241 are the 7-Day series used as the modelling target.
+
+The dataset is committed rather than fetched at runtime, so the dashboard and notebooks are reproducible without network access. The MTA publishes new months on a rolling basis, which means this snapshot falls behind over time; refreshing it means re-downloading from the link above and re-running notebooks 01 to 03 before any later notebook, since every downstream artifact depends on the cleaned data and feature table. Automating that refresh is listed under Future Work.
+
 ## Feature Engineering
 
 The model uses several time-series and operational features, including:
@@ -648,6 +654,10 @@ Completed. The dashboard was rebuilt as a six-page "Dispatch" command-center app
 * Operational risk breakdown (AI Forecast and Scenario Lab pages)
 * Actual vs. predicted OTP and residuals (OTP Trends page)
 * Future forecast results (AI Forecast page)
+
+### Phase 21: Automated Monthly Data Refresh
+
+Planned. The MTA adds new months to [metrics.mta.info](https://metrics.mta.info/?subway/statenislandrailwaymetrics) on a rolling basis, and the committed snapshot currently stops at 2026-01, so the model and every reported metric drift out of date. The intended design is a scheduled job that checks the source for months newer than the last row in `data/raw/cleaned_staten_island_otp.csv`, appends them, re-runs the feature build and model training, and opens a pull request when the metrics change, so no refresh lands without review.
 
 ---
 
