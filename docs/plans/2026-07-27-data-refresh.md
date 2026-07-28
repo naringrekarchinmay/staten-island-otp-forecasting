@@ -32,7 +32,7 @@
 - Produces: `normalize(raw: pd.DataFrame) -> pd.DataFrame`, which renames the 11 Socrata columns to the Excel names, parses `Month` to datetime, and orders rows by Month then the fixed category sequence. Task 2 calls the script's CLI.
 - Produces: `fetch(limit: int = 50000) -> pd.DataFrame` and `main() -> None` writing `data/raw/MTA_Staten_Island_Railway_On-Time_Performance.xlsx`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```python
 # tests/test_fetch.py
@@ -106,12 +106,12 @@ def test_column_map_covers_all_eleven_source_fields():
     assert len(COLUMN_MAP) == 11
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `pytest tests/test_fetch.py -v`
 Expected: FAIL at import, `ModuleNotFoundError: No module named 'scripts'`.
 
-- [ ] **Step 3: Write the script**
+- [x] **Step 3: Write the script**
 
 ```python
 # scripts/fetch_mta_data.py
@@ -209,17 +209,17 @@ if __name__ == "__main__":
     main()
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `pytest tests/test_fetch.py -v`
 Expected: 7 passed.
 
-- [ ] **Step 5: Confirm the whole suite is still green**
+- [x] **Step 5: Confirm the whole suite is still green**
 
 Run: `pytest tests/ -q`
 Expected: `51 passed` (the existing 44 plus the 7 new).
 
-- [ ] **Step 6: Add `requests` to the notebook requirements**
+- [x] **Step 6: Add `requests` to the notebook requirements**
 
 In `requirements-notebooks.txt`, add below the `-r requirements.txt` line:
 
@@ -229,7 +229,7 @@ requests==2.32.3
 
 Then confirm the pin resolves: `pip download requests==2.32.3 --no-deps -d /tmp/reqcheck` and expect a successful download. If that version is unavailable, pin the newest 2.x that is, and record the version used.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add scripts/fetch_mta_data.py tests/test_fetch.py requirements-notebooks.txt
