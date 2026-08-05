@@ -11,7 +11,7 @@
 ## Global Constraints
 
 - **Source of truth:** data.ny.gov Socrata dataset `fccm-griq` ("MTA Staten Island Railway On-Time Performance: Beginning 2006"). CSV endpoint: `https://data.ny.gov/resource/fccm-griq.csv`. This is the same data behind the `metrics.mta.info` dashboard the original file came from.
-- **Verified source state as of 2026-07-27:** 1,225 rows, latest month 2026-05. Repository currently holds 1,205 rows through 2026-01. The delta is exactly **20 rows = 4 new months** (2026-02, 2026-03, 2026-04, 2026-05), each contributing 5 `Day Time` categories.
+- **Source state (updated 2026-08-04):** the source published 2026-06 while Task 1 was in progress, so the refresh applied was **25 rows = 5 new months** (2026-02 through 2026-06), not the 20 rows/4 months first measured on 2026-07-27. Task 2 refreshed the repository to 1,230 raw rows (246 in the 7-Day series) and 1,195 feature rows ending 2026-05. Re-run the dry run before assuming any figure here is current.
 - **Socrata field names are not the Excel column names.** The CSV export returns snake_case field names, and `on_time_performance_with` is truncated by Socrata's field-name length limit. It maps to `On-Time Performance (With Boat)`. Any script must map all 11 columns explicitly and fail loudly if the source schema changes.
 - **Preserve source row order.** The shipped `.xlsx` is ordered by Month, then by the fixed category sequence `Weekday, AM Rush, PM Rush, Weekend, 7-Day`. Sorting alphabetically instead would rewrite every row of `cleaned_staten_island_otp.csv` and produce a 1,200-line spurious diff. Feature correctness is unaffected either way because `notebooks/03` re-sorts with `sort_values(['Day Time', 'Month'])`, but the diff must stay readable.
 - **Every headline metric will change.** The Phase 13 test window is `iloc[-6:]` of the feature table, so it shifts automatically from Aug 2025–Jan 2026 to Nov 2025–Apr 2026. MAE 1.2087, the 18.7% improvement, CV MAE 2.1107, and interval coverage 79.49%/89.74% are all invalidated by this refresh. No document may keep the old numbers alongside new data.
@@ -255,12 +255,12 @@ source row order so refreshes produce readable diffs."
 - Consumes: `scripts/fetch_mta_data.py` from Task 1.
 - Produces: refreshed feature table that Tasks 3 and 4 train and evaluate against.
 
-- [ ] **Step 1: Preview the delta without writing**
+- [x] **Step 1: Preview the delta without writing**
 
 Run: `python scripts/fetch_mta_data.py --dry-run`
 Expected: reports roughly 1,225 fetched rows against 1,205 existing, delta about 20 rows. If the delta is 0, the source has not advanced and the rest of this plan can wait. If the delta is far larger than 20, the source may have been restated; inspect before continuing.
 
-- [ ] **Step 2: Write the refreshed workbook**
+- [x] **Step 2: Write the refreshed workbook**
 
 Run: `python scripts/fetch_mta_data.py`
 Then confirm the diff is additive rather than a reordering:
@@ -281,7 +281,7 @@ print(x[['Month','Day Time']].head(5).to_string(index=False))
 ```
 Expected: about 1,225 rows, 2006-01 to the new latest month, and the first five rows still ordered Weekday, AM Rush, PM Rush, Weekend, 7-Day.
 
-- [ ] **Step 3: Re-run notebooks 01 to 03 in order**
+- [x] **Step 3: Re-run notebooks 01 to 03 in order**
 
 ```bash
 pip install -r requirements-notebooks.txt
@@ -292,7 +292,7 @@ jupyter nbconvert --to notebook --execute --inplace \
 ```
 Expected: all three execute without error. Notebook 01 rewrites `cleaned_staten_island_otp.csv`; notebook 03 rewrites `staten_island_otp_features.csv`.
 
-- [ ] **Step 4: Verify the rebuilt tables**
+- [x] **Step 4: Verify the rebuilt tables**
 
 ```bash
 python -c "
@@ -307,12 +307,12 @@ print('features:', len(f), f['Month'].max().strftime('%Y-%m'))
 ```
 Expected: clean row count matches the workbook; the feature table's latest month is exactly one month behind the clean data, because `Next_Month_OTP` is a `shift(-1)`. Record all four numbers, they are quoted in Task 5.
 
-- [ ] **Step 5: Confirm the feature-engineering tests still pass**
+- [x] **Step 5: Confirm the feature-engineering tests still pass**
 
 Run: `pytest tests/test_features.py -v`
 Expected: all pass. These assert lag and rolling relationships hold on the regenerated artifact, so a pass here proves notebook 03 rebuilt the features correctly on the larger series.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add data/raw outputs/predictions/staten_island_otp_features.csv notebooks/01_data_loading_and_initial_review.ipynb notebooks/02_eda.ipynb notebooks/03_feature_engineering.ipynb outputs/figures/otp_trend.png
