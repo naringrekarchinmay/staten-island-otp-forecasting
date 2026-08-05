@@ -1,22 +1,22 @@
 Feature,MeanAbsSHAP
-Month_Number,0.016706577
-Delay_Rate,0.008305284
-Year,0.0030089123
-OTP_Lag_1,0.0025243035
-OTP_Lag_2,0.0018751116
-OTP_Lag_3,0.0018333715
-Delayed Trains,0.0018054168
-On-Time Trips,0.0016403388
-OTP_Rolling_6,0.0015488294
-Delayed_Trains_Rolling_3,0.0014204968
-Delayed_Trains_Lag_1,0.001336093
-OTP_Rolling_3,0.0011159827
-Scheduled Trips,0.0007246704
-Season_Winter,0.00046122048
-Day Time_AM Rush,0.0002784505
-Day Time_PM Rush,0.0002596962
-Season_Summer,9.399375e-05
-Day Time_Weekday,4.5308447e-05
-Season_Spring,3.9083603e-05
+Month_Number,0.015167378
+Delay_Rate,0.0119270105
+Year,0.0028913605
+OTP_Lag_1,0.002214263
+OTP_Lag_2,0.0018871172
+OTP_Rolling_6,0.0018608293
+OTP_Lag_3,0.0018002666
+Delayed_Trains_Rolling_3,0.0016354267
+Delayed Trains,0.0014924214
+OTP_Rolling_3,0.0012114255
+On-Time Trips,0.0012044428
+Delayed_Trains_Lag_1,0.00093343074
+Scheduled Trips,0.00043877593
+Season_Winter,0.00043785843
+Day Time_PM Rush,0.00016672078
+Day Time_AM Rush,0.00011359179
+Season_Spring,8.0107646e-05
+Day Time_Weekday,3.862094e-05
+Season_Summer,3.058033e-05
 Quarter,0.0
 Day Time_Weekend,0.0
