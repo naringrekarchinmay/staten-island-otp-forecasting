@@ -336,7 +336,7 @@ feature table. Downstream metrics are regenerated in the following commits."
 - Consumes: refreshed `staten_island_otp_features.csv` from Task 2.
 - Produces: retrained model artifact that the dashboard loads and Task 4 evaluates.
 
-- [ ] **Step 1: Re-run notebooks 04 to 06**
+- [x] **Step 1: Re-run notebooks 04 to 06**
 
 ```bash
 jupyter nbconvert --to notebook --execute --inplace \
@@ -346,12 +346,12 @@ jupyter nbconvert --to notebook --execute --inplace \
 ```
 Expected: all execute without error; `models/xgboost_otp_model.pkl` is rewritten.
 
-- [ ] **Step 2: Verify the model artifact loads and predicts sanely**
+- [x] **Step 2: Verify the model artifact loads and predicts sanely**
 
 Run: `pytest tests/test_model.py -v`
 Expected: 3 passed. These load the real artifact and assert predictions stay inside plausible OTP bounds, catching a corrupt or mistrained save.
 
-- [ ] **Step 3: Check the SHAP ranking for narrative drift**
+- [x] **Step 3: Check the SHAP ranking for narrative drift**
 
 ```bash
 python -c "
@@ -361,7 +361,7 @@ print(pd.read_csv('outputs/reports/shap_importance.csv').head(6).to_string(index
 ```
 Expected: a ranking. Compare against the README's claimed drivers (month/seasonality, delay rate, recent OTP momentum, rolling trends). If the top features have reordered materially, note it now; Task 5 updates the wording.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add models/ outputs/figures/shap_bar.png outputs/figures/shap_summary.png outputs/reports/shap_importance.csv notebooks/04_model_training.ipynb notebooks/05_explainability.ipynb notebooks/06_future_forecasting.ipynb
