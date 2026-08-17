@@ -530,7 +530,7 @@ outputs/reports/*.csv."
 - Modify: `docs/deployment.md` (add a data-refresh note)
 - Modify: `reports/final_report.md` (record the frozen data vintage)
 
-- [ ] **Step 1: Push and confirm CI passes**
+- [x] **Step 1: Push and confirm CI passes**
 
 ```bash
 git push
@@ -538,7 +538,7 @@ git push
 Then check the run: `curl -s "https://api.github.com/repos/naringrekarchinmay/staten-island-otp-forecasting/actions/runs?per_page=1" | python -c "import json,sys; r=json.load(sys.stdin)['workflow_runs'][0]; print(r['status'], r['conclusion'])"`
 Expected: `completed success`.
 
-- [ ] **Step 2: Verify the live app serves the refreshed data**
+- [x] **Step 2: Verify the live app serves the refreshed data**
 
 Streamlit Cloud redeploys automatically on push. Wait about two minutes, then confirm the deployed app reflects the new data rather than a cached artifact:
 
@@ -555,7 +555,7 @@ with sync_playwright() as p:
 ```
 Expected: the System Health page shows the new 7-Day month count from Task 5 Step 2, not 241. If it still shows the old value, force a rebuild with Manage app then Reboot.
 
-- [ ] **Step 3: Refresh the README screenshots**
+- [x] **Step 3: Refresh the README screenshots**
 
 ```bash
 python -c "
@@ -578,17 +578,17 @@ for name in pages:
 ```
 Expected: both files rewritten and each well under 1 MB.
 
-- [ ] **Step 4: Record the data vintage for the paper**
+- [x] **Step 4: Record the data vintage for the paper**
 
 Add one line to `reports/final_report.md` section 4 stating the exact data vintage, for example: `Data vintage: MTA Socrata dataset fccm-griq, retrieved 2026-08-XX, covering 2006-01 through <YYYY-MM>.` A paper needs the retrieval date because the source is updated in place and is not versioned.
 
 Add to `docs/deployment.md` under a new "Refreshing the data" heading: run `python scripts/fetch_mta_data.py`, re-run notebooks 01 to 09 in order, then follow this plan's Task 5 to propagate numbers.
 
-- [ ] **Step 5: Freeze**
+- [x] **Step 5: Freeze**
 
 Once the paper draft quotes these numbers, do not re-run the refresh until the paper is submitted. A mid-draft refresh silently invalidates every number already written. If new months arrive during drafting, record them as a footnote instead.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add docs/ reports/ README.md

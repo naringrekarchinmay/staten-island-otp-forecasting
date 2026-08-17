@@ -40,8 +40,10 @@ This report does not claim a comprehensive literature survey of transit OTP pred
 
 The data source is the MTA's public Staten Island Railway On-Time Performance dataset (`data/raw/MTA_Staten_Island_Railway_On-Time_Performance.xlsx`), cleaned into `data/raw/cleaned_staten_island_otp.csv`.
 
-- **Coverage:** monthly observations from January 2006 through January 2026.
-- **Size:** 1,205 rows across five `Day Time` reporting categories (Weekday, AM Rush, PM Rush, Weekend, and 7-Day), of which 241 monthly rows belong to the 7-Day category used for the main research comparison.
+**Data vintage (frozen for this study):** MTA Socrata dataset `fccm-griq` on data.ny.gov, retrieved 2026-08-16, covering 2006-01 through 2026-06. The source is updated in place and is not versioned, so the retrieval date is the only reliable identifier of exactly which observations were used. The rewrite of this report will report results against this vintage. The description below the superseded banner still refers to the earlier 2026-01 draft.
+
+- **Coverage:** monthly observations from January 2006 through June 2026.
+- **Size:** 1,230 rows across five `Day Time` reporting categories (Weekday, AM Rush, PM Rush, Weekend, and 7-Day), of which 246 monthly rows belong to the 7-Day category used for the main research comparison.
 - **Columns:** `Month`, `Day Time`, `Delayed Trains`, `On-Time Trips`, `On-Time Performance`, the three `(With Boat)` variants of those counts, `Scheduled Trips`, `Incomplete Trips`, `Trip Complete Percentage`, and derived calendar fields (`Year`, `Month_Number`, `Month_Name`).
 
 Data rejected or excluded: the `(With Boat)` performance variant is excluded from the target definition (Section 2); `Incomplete Trips` and `Trip Complete Percentage` are missing in early years and are used only where available. No external data (weather, incidents, ridership) is included in the current version; that is future work, not completed work (Section 15).

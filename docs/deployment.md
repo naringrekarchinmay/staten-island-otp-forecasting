@@ -14,7 +14,7 @@ runtime (no Prophet/cmdstan build in the cloud).
    - **Branch:** `main`
    - **Main file path:** `app/streamlit_app.py`
    - **App URL:** pick a slug, e.g. `staten-island-otp` (→ `https://staten-island-otp.streamlit.app`)
-4. **Required — do not skip:** click **Advanced settings** and set
+4. **Required, do not skip:** click **Advanced settings** and set
    **Python version = 3.13**. The pinned `numpy`/`pandas` wheels only exist
    up to Python 3.13 (cp313); if the build lands on 3.14 it will try to
    compile numpy/pandas from source and hang at "Your app is in the oven"
@@ -24,7 +24,7 @@ runtime (no Prophet/cmdstan build in the cloud).
    compiling) and is live in ~2 minutes.
 
 > If an app is already stuck on 3.14: delete it (**⋮ → Delete app**) and
-> redeploy from step 2 — the version is fixed at first deploy and can only be
+> redeploy from step 2; the version is fixed at first deploy and can only be
 > changed by redeploying.
 
 ## After it goes live
@@ -38,6 +38,50 @@ runtime (no Prophet/cmdstan build in the cloud).
 
 Streamlit Cloud auto-redeploys on every push to `main`. To force a rebuild
 (e.g. after changing `requirements.txt`), use **Manage app → Reboot**.
+
+## Refreshing the data
+
+The committed dataset is a frozen snapshot. When the MTA publishes new months
+and you want to pull them in:
+
+1. Install the full stack (the notebooks need it, and the base conda env has
+   drifted to a numpy that breaks SHAP):
+
+   ```bash
+   python -m venv .venv-notebooks
+   ./.venv-notebooks/bin/pip install -r requirements-notebooks.txt
+   ```
+
+2. Fetch the latest months from the data.ny.gov API into the workbook the
+   notebooks read (dry-run first to see the delta):
+
+   ```bash
+   python scripts/fetch_mta_data.py --dry-run
+   python scripts/fetch_mta_data.py
+   ```
+
+3. Re-run notebooks 01 to 09 in order (they regenerate the cleaned data,
+   feature table, model, and Phase 13 to 15 metrics), then rebuild the
+   rolling-origin comparison:
+
+   ```bash
+   ./.venv-notebooks/bin/python -m nbconvert --to notebook --execute --inplace \
+     notebooks/0[1-9]_*.ipynb
+   ./.venv-notebooks/bin/python scripts/rolling_origin_eval.py
+   ```
+
+4. Propagate the new numbers into `app/shared/data.py` (the PI constants),
+   the app view strings, the README, and the report. `pytest tests/` is the
+   drift detector: `test_pi_constants_match_phase15_artifact` fails until the
+   `data.py` constants match the regenerated interval summary.
+
+5. Commit, push, and verify the live pages. Streamlit Cloud redeploys on push.
+
+**A refresh changes every headline metric.** The fair-test window is the last
+six months of the series, so it moves with the data; the 2026-06 refresh, for
+instance, moved XGBoost from first to third on that single window. If a paper
+draft already quotes numbers, freeze the data until it is submitted rather than
+refreshing mid-draft.
 
 ## Notes
 
