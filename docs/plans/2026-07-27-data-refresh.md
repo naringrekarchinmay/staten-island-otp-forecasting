@@ -448,7 +448,7 @@ Test window shifts to <new window>. Headline MAE moves from 1.2087 to
 - Consumes: the metric values captured in Task 4 Step 2.
 - Produces: a repository where every quoted number matches `outputs/reports/*.csv`.
 
-- [ ] **Step 1: Update the prediction-interval constants**
+- [x] **Step 1: Update the prediction-interval constants**
 
 In `app/shared/data.py`, replace the two constants with the regenerated bounds, keeping the comment pointing at the source CSV:
 
@@ -461,7 +461,7 @@ PI90 = (<new_lower_90>, <new_upper_90>)
 Run: `pytest tests/test_forecast.py -v`
 Expected: all pass, including the constant-versus-artifact check that failed in Task 4.
 
-- [ ] **Step 2: Update the two hardcoded strings in the app**
+- [x] **Step 2: Update the two hardcoded strings in the app**
 
 `app/views/health.py:9`, replace `241 months` with the new 7-Day row count from Task 2 Step 4.
 `app/views/research.py:41`, replace `Aug 2025 – Jan 2026 test window` with the new window from Task 4.
@@ -469,15 +469,15 @@ Expected: all pass, including the constant-versus-artifact check that failed in 
 Run: `pytest tests/test_app_pages.py -v`
 Expected: 6 passed, confirming every page still renders after the edits.
 
-- [ ] **Step 3: Update the README**
+- [x] **Step 3: Update the README**
 
 Replace in place: the six rows of the Headline Results table, the improvement percentages, the sample size and R² spread in Limitations, the fold-1 and fold-5 MAE values, the row counts and date range in the Data section, the Phase 13/14/15 result tables, and the data-range note near How to Run. Keep the structure; change only numbers, dates, and the window label.
 
-- [ ] **Step 4: Update the final report**
+- [x] **Step 4: Update the final report**
 
 Apply the same replacements in `reports/final_report.md`: dataset size and range in section 4, the model table and improvement claim in section 10, the CV and interval numbers, and the sample-size and era-dependence bullets in section 14. If `reports/final_report.pdf` is regenerated from the Markdown, regenerate it; otherwise note in the commit that the PDF is stale.
 
-- [ ] **Step 5: Verify every quoted number against the CSVs**
+- [x] **Step 5: Verify every quoted number against the CSVs**
 
 ```bash
 python - <<'EOF'
@@ -506,12 +506,12 @@ EOF
 ```
 Expected: every metric marked OK, and no line beginning `STALE VALUE STILL PRESENT`. Any stale hit means a number was missed in Step 3 or 4. Note that a stale string is legitimate only if the refreshed value happens to be identical, which is very unlikely; investigate rather than assume.
 
-- [ ] **Step 6: Run the full suite**
+- [x] **Step 6: Run the full suite**
 
 Run: `pytest tests/ -q`
 Expected: `51 passed`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add app/ README.md reports/ PROJECT_ROADMAP.md
