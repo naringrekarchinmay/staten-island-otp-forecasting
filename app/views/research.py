@@ -7,38 +7,71 @@ from shared.charts import base_layout
 
 breadcrumb("RESEARCH", prev=("views/scenario.py", "05 Scenario Lab"))
 page_header("06", "Research", "The Science Behind It",
-            "Phase 13–15 validation of the XGBoost forecaster. Target: next-month 7-Day "
+            "How the forecaster is validated against baselines. Target: next-month 7-Day "
             "On-Time Performance (without boat). All numbers from saved research artifacts.")
 
-tab13, tab14, tab15 = st.tabs(["Phase 13 · Baseline", "Phase 14 · Cross-Validation", "Phase 15 · Intervals"])
+tabRO, tab13, tab14, tab15 = st.tabs(
+    ["Rolling Origin", "Single Window", "Cross-Validation", "Intervals"])
 
+# Robust comparison: many one-step-ahead forecasts, every model on the same task.
+TOP_GROUP = {"XGBoost", "SARIMA", "Prophet"}
+with tabRO:
+    ro = data.load_report("phase22_rolling_origin_summary.csv").copy()
+    paired = data.load_report("phase22_rolling_origin_paired_vs_xgboost.csv")
+    n_origins = int(ro["N"].iloc[0])
+
+    st.dataframe(
+        ro[["Model", "MAE", "RMSE", "MedianAE", "MaxAE", "WinRate"]].style.apply(
+            lambda r: ["background-color: rgba(233,184,32,0.12)"] * len(r)
+            if r["Model"] in TOP_GROUP else [""] * len(r), axis=1)
+          .format({"MAE": "{:.3f}", "RMSE": "{:.3f}", "MedianAE": "{:.3f}",
+                   "MaxAE": "{:.2f}", "WinRate": "{:.1f}%"}),
+        use_container_width=True, hide_index=True)
+
+    chart_title(f"Mean Absolute Error across {n_origins} one-step-ahead forecasts (pts)")
+    colors = [GOLD if m in TOP_GROUP else "rgba(74,138,176,0.6)" for m in ro["Model"]]
+    fig = go.Figure(go.Bar(x=ro["Model"], y=ro["MAE"], marker_color=colors))
+    base_layout(fig, height=250, pct_axis=False, legend=False)
+    fig.update_xaxes(tickfont=dict(size=10))
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.info(
+        f"Each model makes {n_origins} one-step-ahead forecasts on the same task, using only "
+        "prior data at every origin. XGBoost, SARIMA and Prophet are statistically "
+        "indistinguishable (paired Wilcoxon vs XGBoost: Prophet p = 0.69, SARIMA p = 0.05), "
+        "and all three clearly beat the naive and moving-average baselines (p ≤ 0.03). The "
+        "honest reading is a three-way tie at the top, not a single winner.")
+
+# Illustrative single hold-out. Kept for continuity, but underpowered: six
+# points cannot reliably rank six models, which is why the rolling-origin tab
+# is the primary evidence.
 with tab13:
     p13 = data.load_report("phase13_model_comparison.csv").copy()
-    p13["Rank"] = ["1st ⭐", "2nd", "3rd", "4th", "5th", "Baseline"]
+    p13 = p13.sort_values("MAE").reset_index(drop=True)
+    p13.insert(1, "Rank", range(1, len(p13) + 1))
+    best = p13.loc[0, "Model"]
     st.dataframe(
         p13.style.apply(lambda r: ["background-color: rgba(233,184,32,0.12)"] * len(r)
-                        if r["Model"] == "XGBoost Fair" else [""] * len(r), axis=1)
+                        if r["Model"] == best else [""] * len(r), axis=1)
            .format({"MAE": "{:.4f}", "RMSE": "{:.4f}", "R2": "{:.4f}", "MAPE": "{:.4f}"}),
         use_container_width=True, hide_index=True)
 
     c1, c2 = st.columns(2)
-    with c1:
-        chart_title("Model Comparison — MAE (pts, lower is better)")
-        colors = [GOLD if m == "XGBoost Fair" else "rgba(74,138,176,0.6)" for m in p13["Model"]]
-        fig = go.Figure(go.Bar(x=p13["Model"], y=p13["MAE"], marker_color=colors))
-        base_layout(fig, height=230, pct_axis=False, legend=False)
-        fig.update_xaxes(tickfont=dict(size=9))
-        st.plotly_chart(fig, use_container_width=True)
-    with c2:
-        chart_title("Model Comparison — RMSE (pts)")
-        fig = go.Figure(go.Bar(x=p13["Model"], y=p13["RMSE"], marker_color=colors))
-        base_layout(fig, height=230, pct_axis=False, legend=False)
-        fig.update_xaxes(tickfont=dict(size=9))
-        st.plotly_chart(fig, use_container_width=True)
+    for col, metric in ((c1, "MAE"), (c2, "RMSE")):
+        with col:
+            chart_title(f"Single-Window {metric} (pts, lower is better)")
+            colors = [GOLD if m == best else "rgba(74,138,176,0.6)" for m in p13["Model"]]
+            fig = go.Figure(go.Bar(x=p13["Model"], y=p13[metric], marker_color=colors))
+            base_layout(fig, height=230, pct_axis=False, legend=False)
+            fig.update_xaxes(tickfont=dict(size=9))
+            st.plotly_chart(fig, use_container_width=True)
 
-    st.info("Fairly retrained XGBoost (trained only on pre-test data) cut MAE by ~18.7% vs the "
-            "6-month moving average and was the only model with positive R² on the "
-            "Aug 2025 – Jan 2026 test window.")
+    st.warning(
+        "One six-month hold-out (Jan–Jun 2026). With only six points this ranking is not "
+        "reliable, and it flipped once five months of new data arrived: an earlier window "
+        "put XGBoost first by 18.7%, this one puts it third. The window also contains "
+        "February 2026, when a snowstorm cut OTP to 94% — an external shock the model has "
+        "no weather input for. See the Rolling Origin tab for the comparison that holds up.")
 
 with tab14:
     folds = data.load_report("phase14_timeseries_cv_results.csv")
@@ -61,9 +94,9 @@ with tab14:
         base_layout(fig, height=230, pct_axis=False, legend=False)
         fig.update_xaxes(title="Training rows available")
         st.plotly_chart(fig, use_container_width=True)
-    st.info("Average MAE 2.11 ± 0.59 pts across 5 folds. Accuracy improves almost monotonically "
-            "with training history (fold 1: 2.93 → fold 5: 1.30), so the Phase 13 result reads as "
-            "a recent-era estimate.")
+    st.info("Average MAE 2.11 ± 0.59 pts across 5 expanding-window folds. Accuracy improves "
+            "almost monotonically with training history (fold 1: 2.76 → fold 5: 1.29), so the "
+            "model is most trustworthy in the recent era where history is longest.")
 
 with tab15:
     p15 = data.load_report("phase15_prediction_interval_summary.csv")

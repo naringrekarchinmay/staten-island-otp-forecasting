@@ -7,8 +7,8 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[2]
 
 # Phase 15 residual bounds (percentage points), from outputs/reports/phase15_prediction_interval_summary.csv
-PI80 = (-3.1265, 3.3576)
-PI90 = (-4.4797, 4.1961)
+PI80 = (-3.0296, 3.2960)
+PI90 = (-3.8730, 4.0214)
 
 @st.cache_data
 def load_features():

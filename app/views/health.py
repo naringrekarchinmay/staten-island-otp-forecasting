@@ -6,7 +6,7 @@ from shared.charts import base_layout, threshold_90
 
 breadcrumb("SYSTEM HEALTH", prev=("views/home.py", "01 Home"), nxt=("views/trends.py", "03 OTP Trends"))
 page_header("02", "System Health", "How Are We Doing?",
-            "Current system performance across 241 months of 7-Day service data.")
+            "Current system performance across 246 months of 7-Day service data.")
 
 df7 = data.seven_day(data.load_clean()).copy()
 otp = df7.set_index("Month")["On-Time Performance"]

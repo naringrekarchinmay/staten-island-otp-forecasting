@@ -24,7 +24,7 @@ c1, c2, c3, c4 = st.columns(4)
 with c1, st.container(key="gold_home"):
     st.metric("Avg OTP (7-Day)", f"{avg_otp:.2%}")
 c2.metric("Avg Delay Rate", f"{avg_delay:.2%}")
-c3.metric("Fair-Test MAE", "1.21 pts", "-18.7% error vs best baseline", delta_color="inverse")
+c3.metric("Rolling-Origin MAE", "1.52 pts", "-30% vs naive baseline", delta_color="inverse")
 c4.metric("80% Interval Coverage", "79.5%")
 
 st.markdown("<div style='height:10px;'></div>", unsafe_allow_html=True)
@@ -34,7 +34,7 @@ chapters = [
     ("views/trends.py", "03", "OTP Trends", "Twenty years of history, actual vs. predicted, residuals."),
     ("views/forecast.py", "04", "AI Forecast", "Recursive OTP forecast with calibrated intervals."),
     ("views/scenario.py", "05", "Scenario Lab", "Simulate delay increases and model the OTP impact."),
-    ("views/research.py", "06", "Research", "Phase 13–15 validation and SHAP explainability."),
+    ("views/research.py", "06", "Research", "Baseline comparison, validation, and SHAP explainability."),
 ]
 cols = st.columns(5)
 for col, (page, num, title, desc) in zip(cols, chapters):
