@@ -382,7 +382,7 @@ git commit -m "model: retrain XGBoost on refreshed data through <YYYY-MM>"
 - Consumes: refreshed feature table and retrained model.
 - Produces: the metric CSVs that Task 5 copies into `data.py`, the README, and the report.
 
-- [ ] **Step 1: Re-run notebooks 07 to 09**
+- [x] **Step 1: Re-run notebooks 07 to 09**
 
 ```bash
 jupyter nbconvert --to notebook --execute --inplace \
@@ -392,7 +392,7 @@ jupyter nbconvert --to notebook --execute --inplace \
 ```
 Expected: all execute. Notebook 07 needs Prophet and statsmodels, which is why `requirements-notebooks.txt` is the environment for this task. Note that its split is `iloc[-6:]`, so the test window shifts automatically to the last six months of the refreshed feature table.
 
-- [ ] **Step 2: Capture the new headline numbers**
+- [x] **Step 2: Capture the new headline numbers**
 
 ```bash
 python -c "
@@ -413,16 +413,16 @@ print(pi[['Interval','Lower_Residual_Bound','Upper_Residual_Bound','Coverage_Per
 ```
 Expected: a complete set of new figures. Record every one; Task 5 writes exactly these values and nothing rounded by hand.
 
-- [ ] **Step 3: Sanity-check that XGBoost still wins**
+- [x] **Step 3: Sanity-check that XGBoost still wins**
 
 Confirm from Step 2 that `XGBoost Fair` has the lowest MAE. If a baseline now beats it, **stop and report before continuing.** That is a real finding that changes the paper's claim, not a bug to patch over, and the README, report, and abstract all need rethinking rather than a numeric find-and-replace.
 
-- [ ] **Step 4: Watch the PI test fail, proving it detects drift**
+- [x] **Step 4: Watch the PI test fail, proving it detects drift**
 
 Run: `pytest tests/test_forecast.py::TestPredictionIntervals::test_pi_constants_match_phase15_artifact -v`
 Expected: FAIL, because `app/shared/data.py` still holds the old bounds while the CSV now holds new ones. This failure is the intended signal and Task 5 Step 1 resolves it. If it unexpectedly passes, the interval bounds did not change; confirm notebook 09 actually re-ran.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add outputs/ notebooks/07_baseline_model_comparison.ipynb notebooks/08_timeseries_cross_validation.ipynb notebooks/09_prediction_intervals.ipynb
