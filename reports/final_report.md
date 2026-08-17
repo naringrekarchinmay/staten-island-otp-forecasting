@@ -6,6 +6,10 @@
 
 ---
 
+> **Results superseded (2026-08).** This report reflects data through 2026-01, when a single six-month hold-out put XGBoost first by 18.7%. The data has since been refreshed through 2026-06 and the evaluation rebuilt as a rolling-origin comparison with paired significance tests. Under that stronger protocol XGBoost, SARIMA, and Prophet are statistically indistinguishable, all three beat the naive and moving-average baselines by about 30%, and the single-window ranking is treated as unreliable. See the repository README (Headline Results and Phase 22) and `outputs/reports/phase22_rolling_origin_summary.csv` for current numbers. The report will be rewritten against the final figures once the weather-feature work is complete; the sections below are retained as the prior draft.
+
+---
+
 ## 1. Introduction and Motivation
 
 The Staten Island Railway (SIR) is the only rapid-transit line serving Staten Island, and for many residents it is the primary link to the Staten Island Ferry and, from there, to Manhattan. On-time performance (OTP) is the Metropolitan Transportation Authority's (MTA) headline reliability measure for the line: the share of scheduled trips that arrive at their terminal within the on-time threshold. The MTA publishes SIR OTP monthly through its open data program, but this reporting is retrospective. It describes how the railway performed last month; it says nothing about how it is likely to perform next month.
