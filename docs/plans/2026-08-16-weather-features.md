@@ -32,7 +32,7 @@
 - Produces: `aggregate_monthly(daily: pd.DataFrame) -> pd.DataFrame` mapping daily records to one row per month with the columns in `WEATHER_COLUMNS`.
 - Produces: `fetch(start="2006-01-01", end="2026-06-30") -> pd.DataFrame` and `main()` writing the monthly CSV.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```python
 # tests/test_weather_fetch.py
@@ -98,12 +98,12 @@ def test_missing_daily_column_raises():
         aggregate_monthly(daily)
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `pytest tests/test_weather_fetch.py -v`
 Expected: FAIL at import, `ModuleNotFoundError: No module named 'scripts.fetch_weather_data'`.
 
-- [ ] **Step 3: Write the script**
+- [x] **Step 3: Write the script**
 
 ```python
 # scripts/fetch_weather_data.py
@@ -191,17 +191,17 @@ if __name__ == "__main__":
     main()
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `pytest tests/test_weather_fetch.py -v`
 Expected: 7 passed.
 
-- [ ] **Step 5: Fetch the data and sanity-check the storm**
+- [x] **Step 5: Fetch the data and sanity-check the storm**
 
 Run: `python scripts/fetch_weather_data.py`
 Expected: 246 months, 2006-01 to 2026-06, and the printed Feb 2026 line shows roughly 30 cm total with a ~18 cm peak day. If Feb 2026 snowfall is near zero, the location or date handling is wrong; stop and fix before continuing.
 
-- [ ] **Step 6: Confirm the full suite is green and commit**
+- [x] **Step 6: Confirm the full suite is green and commit**
 
 Run: `pytest tests/ -q` (expect all prior tests plus 7 new).
 
