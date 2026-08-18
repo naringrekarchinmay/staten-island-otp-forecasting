@@ -227,7 +227,7 @@ vintage. Feb 2026 captures the 30 cm snow month that the OTP model misses."
 - Consumes: `outputs/predictions/staten_island_otp_features.csv` (7-Day rows) and `data/raw/staten_island_weather_monthly.csv`.
 - Produces: two feature tables identical to the base 7-Day feature set plus the eight `WEATHER_COLUMNS`, one joined operationally (weather of month *t*) and one joined as oracle (weather of month *t + 1*). Task 3 reads both.
 
-- [ ] **Step 1: Build the two joins in the notebook**
+- [x] **Step 1: Build the two joins in the notebook**
 
 Load the 7-Day feature rows and the monthly weather. For each row whose `Month` is *t* and whose target `Next_Month_OTP` is the OTP of *t + 1*:
 - Operational table: left-join weather on `Month == t`.
@@ -235,7 +235,7 @@ Load the 7-Day feature rows and the monthly weather. For each row whose `Month` 
 
 Write both to the CSVs above. Assert that neither introduces NaNs in the weather columns on the interior rows (the first/last month may be unavoidable and should be documented, not filled).
 
-- [ ] **Step 2: Verify the Feb 2026 alignment explicitly**
+- [x] **Step 2: Verify the Feb 2026 alignment explicitly**
 
 In the oracle table, the row with `target_month == 2026-02-01` (i.e. `Month == 2026-01-01`) must carry February's ~30 cm `total_snowfall_cm`. In the operational table, the row with `Month == 2026-02-01` carries February's weather. Print both rows and confirm the snowfall lands where intended. This is the single most important correctness check in the phase: getting the offset backwards would silently invert the whole result.
 
@@ -245,11 +245,11 @@ row = oracle[oracle["Month"] == "2026-01-01"]
 assert row["total_snowfall_cm"].iloc[0] > 25, "oracle join misaligned"
 ```
 
-- [ ] **Step 3: EDA on weather vs OTP**
+- [x] **Step 3: EDA on weather vs OTP**
 
 Correlate each weather feature with same-month OTP (contemporaneous) and with next-month OTP. Save a correlation bar chart to `weather_otp_correlation.png`. Expect snowfall and freezing-days to correlate negatively with same-month OTP and weakly or not at all with next-month OTP; that contrast is the operational-versus-oracle story in one figure.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add notebooks/11_weather_features.ipynb outputs/predictions/otp_weather_operational.csv outputs/predictions/otp_weather_oracle.csv outputs/figures/weather_otp_correlation.png
