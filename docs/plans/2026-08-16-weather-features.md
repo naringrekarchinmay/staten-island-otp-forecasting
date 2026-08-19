@@ -276,7 +276,7 @@ Feb 2026 snowfall lands on the correct row in both."
 - Reuses: `rolling_origins`, `xgboost_forecast`, `summarize`, `paired_comparison` from `scripts/rolling_origin_eval.py`.
 - Produces: rolling-origin errors for three models on identical origins: `XGBoost` (base, Phase 22 features), `XGBoost+Weather (operational)`, `XGBoost+Weather (oracle)`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Test the two behaviours specific to this experiment (origin alignment across the three feature matrices, and a shock-month filter), reusing the harness for everything else.
 
@@ -310,23 +310,23 @@ def test_align_matrices_share_one_row_index_per_month():
     assert len(b) == len(w) == 5
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `pytest tests/test_weather_experiment.py -v`
 Expected: FAIL at import.
 
-- [ ] **Step 3: Write the experiment**
+- [x] **Step 3: Write the experiment**
 
 Build three aligned feature matrices over the shared 7-Day months. At each rolling origin (reuse `rolling_origins` with the same `min_train=120` as Phase 22), train each variant on rows before the origin and predict the origin month, so the only difference between variants is the presence of the weather columns. Collect predictions long-format with a `model` column, then call `summarize` and `paired_comparison(reference="XGBoost")`. Additionally, compute the same metrics restricted to `shock_months` (target months with `total_snowfall_cm` above a threshold, e.g. 15 cm) and write them to `phase23_shock_months.csv`. Save an errors-over-time and boxplot figure as in Phase 22.
 
 `shock_months(weather, threshold_cm)` returns the sorted list of target months above the snowfall threshold. `align_matrices(base, weather)` inner-joins on `Month` and returns the two feature frames plus the shared month index.
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `pytest tests/test_weather_experiment.py -v` then `pytest tests/ -q`.
 Expected: all green.
 
-- [ ] **Step 5: Run the experiment and read the result**
+- [x] **Step 5: Run the experiment and read the result**
 
 Run: `python scripts/weather_experiment.py`
 Capture, for each variant, overall MAE and the paired Wilcoxon p-value against base XGBoost, plus the same on shock months only. Interpretation gates:
@@ -336,7 +336,7 @@ Capture, for each variant, overall MAE and the paired Wilcoxon p-value against b
 
 Do not tune features or thresholds to manufacture significance. If the first feature set is not significant, that is the result; any additional feature engineering must be pre-declared here as a follow-up, not a silent retrofit.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add scripts/weather_experiment.py tests/test_weather_experiment.py outputs/reports/phase23_*.csv outputs/figures/phase23_weather_errors.png
